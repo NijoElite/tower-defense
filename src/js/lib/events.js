@@ -1,14 +1,11 @@
-let subscribers;
-
-
 class GameEvent {
   constructor(name) {
     this.name = name;
-    subscribers = new Map();
+    this._subscribers = new Map();
   }
 
   add(fn) {
-    const contains = subscribers.get(fn);
+    const contains = this._subscribers.get(fn);
 
     if (contains) {
       const err = new Error(`Event ${this.name}` +
@@ -18,11 +15,11 @@ class GameEvent {
       throw err;
     }
 
-    subscribers.set(fn, fn);
+    this._subscribers.set(fn, fn);
   }
 
   contains(fn) {
-    return !!subscribers.get(fn);
+    return !!this._subscribers.get(fn);
   }
 
   remove(fn) {
@@ -30,17 +27,16 @@ class GameEvent {
       return;
     }
 
-    subscribers.delete(fn);
+    this._subscribers.delete(fn);
   }
 
   removeAll() {
-    subscribers.clear();
+    this._subscribers.clear();
   }
 
   notifyAll(...args) {
-    subscribers.forEach((fn) => fn(...args));
+    this._subscribers.forEach((fn) => fn(...args));
   }
-}
-
+};
 
 module.exports = GameEvent;
