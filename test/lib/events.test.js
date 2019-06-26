@@ -1,4 +1,3 @@
-const mocha = require('mocha');
 const chai = require('chai');
 const spies = require('chai-spies');
 const GameEvent = require('../../src/js/lib/events');
@@ -12,7 +11,7 @@ const expect = chai.expect;
 describe('GameEvent', () => {
   let event;
   let expectedFn;
-  
+
   beforeEach(() => {
     event = new GameEvent('ExpectedName');
     expectedFn = () => {};
@@ -34,7 +33,7 @@ describe('GameEvent', () => {
       expect(event.contains(expectedFn)).to.be.false;
     });
 
-    it('should do nothing if event does not contain that function in subscribers', () => {
+    it('should do nothing if the function is not in the subscribers', () => {
       event.add(expectedFn);
       event.remove(() => {});
 
