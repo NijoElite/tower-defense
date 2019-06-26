@@ -48,13 +48,18 @@ function onReady(func) {
   onReadyCallbacks.push(func);
 }
 
-function getResource(name) {
-  return resources[name];
+function getResources(...names) {
+  const result = [];
+  names.forEach((name) => {
+    result.push(resources[name]);
+  });
+
+  return result;
 }
 
 module.exports = {
   onReady: onReady,
   isReady: isReady,
   load: load,
-  getResource: getResource,
+  getResources: getResources,
 };
