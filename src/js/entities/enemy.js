@@ -9,8 +9,8 @@ class Enemy extends Entity {
       opts.pos = {};
     }
 
-    this._health = 100 || opts.health;
-    this._speed = 10 || opts.speed;
+    this._health = opts.health || 100;
+    this._speed = opts.speed || 10;
 
     this._events.set('onDeath', new GameEvent('onDeath'));
   }
