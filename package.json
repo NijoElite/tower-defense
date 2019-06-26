@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha ./test/**/*.*",
     "build": "gulp build",
     "dev": "gulp watch"
   },
@@ -23,6 +23,7 @@
     "browser-sync": "^2.26.7",
     "browserify": "^16.2.3",
     "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
     "eslint": "^6.0.1",
     "eslint-config-google": "^0.13.0",
     "gulp": "^4.0.2",
