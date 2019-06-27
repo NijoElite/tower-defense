@@ -48,7 +48,7 @@ function onReady(func) {
   onReadyCallbacks.push(func);
 }
 
-function getResources(...names) {
+function getResources(names) {
   const result = [];
   names.forEach((name) => {
     result.push(resources[name]);
