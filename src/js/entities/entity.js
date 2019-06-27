@@ -1,45 +1,47 @@
 const GameEvent = require('../lib/events');
+const SpriteSet = require('../lib/sprite-set');
 
 class Entity {
-  constructor(opts = []) {
-    this._canvas = opts.canvas;
-
-    this.frames = opts.frames || [];
-    this.fps = opts.fps || 30;
+  constructor(opts = {}) {
     this.position = opts.position || {x: 0, y: 0};
-    this.size = opts.size || {width: 0, height: 0};
 
+    this._sprites = new SpriteSet(30, opts.names);
     this._events = new Map();
-    this._timestamps = {
-      lastShot: 0,
-      lastAnimate: 0,
-    };
 
-    if (this._canvas) {
-      this._ctx = this._canvas.getContext('2d');
-      // onHover(this)
-      this._events.set('onHover', new GameEvent('onHover'));
-      // onClick(this, )
-      this._events.set('onClick', new GameEvent('onClick'));
-      this._canvas.addEventListener('click', this._onClick.bind(this));
-    // this._canvas.addEventListener('click', this._onHover.bind(this));
-    }
+    this._childs = new Set();
+    this.parent = null;
+
+    // onHover(this)
+    // this._events.set('onHover', new GameEvent('onHover'));
+
+    // onClick(this)
+    this._events.set('onClick', new GameEvent('onClick'));
+    // this._canvas.addEventListener('click', this._onClick.bind(this));
   }
 
-  _onClick(e) {
-    const x = e.clientX;
-    const y = e.clientY;
+  get childs() {
+    return this._childs;
+  }
 
-    const xInbound = (x > this.position.x) &&
-                     (x < this.position.x + this.size.width);
+  appendChild(child) {
+    child._parent = this;
+    this._childs.add(child);
+  }
 
-    const yInbound = y > this.position.y &&
-                     y < this.position.y + this.size.height;
+  removeChild(child) {
+    child._parent = null;
+    this._childs.delete(child);
+  }
 
-    if (xInbound && yInbound) {
-      console.log(this);
-      this._fireEvent('onClick', this, e);
-    }
+  coordsInbound(x, y) {
+    const frame = this._sprites.getCurrentFrame();
+    const pos = this.position;
+    const xInbound = (x > pos.x - frame.width / 2) &&
+                     (x < pos.x + frame.width / 2);
+
+    const yInbound = (y > pos.y - frame.height / 2) &&
+                     (y < pos.y + frame.height / 2);
+    return xInbound && yInbound;
   }
 
   on(eventName, cb) {
@@ -72,21 +74,14 @@ class Entity {
     event.notifyAll(...args);
   }
 
-  draw() {
-    this._ctx.fillRect(this.position.x, this.position.y,
-        this.size.width, this.size.height);
-  }
+  draw(ctx) {
+    const img = this._sprites.getNextFrame();
 
-  update(progress) {
-    const coolDown = 5000;
-    const animationTime = 1000 / 35;
-
-    const ts = this._timestamps;
-
-    if (Date.now() - ts.lastShot >= coolDown) {
-      this._fireEvent('shoot', this);
-      ts.lastShot = Date.now();
+    if (typeof img === 'undefined') {
+      return;
     }
+
+    ctx.drawImage(img, this.position.x, this.position.y);
   }
 }
 
