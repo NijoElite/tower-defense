@@ -8,7 +8,7 @@ class Entity {
     this.centered = opts.centered || false;
     this.size = opts.size || null;
 
-    this._sprites = new SpriteSet(30, opts.names);
+    this._sprites = new SpriteSet(opts.fps || 30, opts.names);
     this._events = new Map();
 
     this._childs = new Set();
