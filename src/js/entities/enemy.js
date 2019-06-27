@@ -27,7 +27,7 @@ class Enemy extends Entity {
   setPath(path) {
     this._path = [];
     path.forEach((point) => {
-      this._path.unshift(point);
+      this._path.push(point);
     });
   }
 
