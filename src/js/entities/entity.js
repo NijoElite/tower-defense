@@ -2,14 +2,7 @@ const GameEvent = require('../lib/events');
 
 class Entity {
   constructor(opts = []) {
-    if (typeof opts.canvas === 'undefined') {
-      const err = new Error(`canvas is undefined`);
-      err.name = 'Invalid Argument';
-      throw err;
-    }
-
     this._canvas = opts.canvas;
-    this._ctx = this._canvas.getContext('2d');
 
     this.frames = opts.frames || [];
     this.fps = opts.fps || 30;
@@ -22,13 +15,15 @@ class Entity {
       lastAnimate: 0,
     };
 
-    // onHover(this)
-    this._events.set('onHover', new GameEvent('onHover'));
-    // onClick(this, )
-    this._events.set('onClick', new GameEvent('onClick'));
-
-    this._canvas.addEventListener('click', this._onClick.bind(this));
+    if (this._canvas) {
+      this._ctx = this._canvas.getContext('2d');
+      // onHover(this)
+      this._events.set('onHover', new GameEvent('onHover'));
+      // onClick(this, )
+      this._events.set('onClick', new GameEvent('onClick'));
+      this._canvas.addEventListener('click', this._onClick.bind(this));
     // this._canvas.addEventListener('click', this._onHover.bind(this));
+    }
   }
 
   _onClick(e) {
