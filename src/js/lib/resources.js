@@ -13,7 +13,7 @@ const filenames = ['10.png', '13.png', '16.png',
   '29.png', '31.png', '34.png', '37.png',
   '3.png', '42.png', '45.png', '48.png',
   '50.png', '53.png', '56.png', '59.png',
-  '61.png', '8.png'];
+  '61.png', '8.png', 'map.jpg'];
 
 
 const onReadyCallbacks = [];
