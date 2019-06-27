@@ -10,7 +10,7 @@ const config = {
   input: {
     html: './src/**/*.html',
     css: './src/css/*.css',
-    assets: './src/assets/*.*',
+    assets: './src/assets/**/*.*',
   },
   output: {
     js: './build/js',
