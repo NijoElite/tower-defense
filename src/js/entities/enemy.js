@@ -2,12 +2,8 @@ const Entity = require('./entity');
 const GameEvent = require('../lib/events');
 
 class Enemy extends Entity {
-  constructor(opts = []) {
+  constructor(opts = {}) {
     super(opts);
-
-    if (typeof opts.pos === 'undefined') {
-      opts.pos = {};
-    }
 
     this._health = opts.health || 100;
     this._speed = opts.speed || 10;

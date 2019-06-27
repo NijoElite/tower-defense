@@ -1,7 +1,7 @@
 const Entity = require('./entity');
 
 class Tower extends Entity {
-  constructor(opts) {
+  constructor(opts = {}) {
     super(opts);
 
     this._damage = opts.damage || 50;
