@@ -155,6 +155,7 @@ class Enemy extends Entity {
     this._path = examplePath;
 
     this._events.set('onDeath', new GameEvent('onDeath'));
+    this._events.set('onTarget', new GameEvent('onTarget'));
   }
 
   get health() {
@@ -173,12 +174,14 @@ class Enemy extends Entity {
     const pos = this.position;
     const path = this._path[0];
 
-    if (!path) return;
+    if (!path) {
+      this._fireEvent('onTarget', this);
+      return;
+    }
 
     if ((pos.x < path.x + delta && pos.x > path.x - delta) &&
         (pos.y < path.y + delta && pos.y > path.y - delta)) {
       this._path.shift();
-
       return;
     }
 
