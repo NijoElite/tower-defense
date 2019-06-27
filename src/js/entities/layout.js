@@ -7,7 +7,7 @@ function bfs(set, fn) {
     while (queue.length !== 0) {
       const node = queue.shift();
       visitedNodes.push(node);
-      node._childs.forEach((child) => queue.push(child));
+      node.childs.forEach((child) => queue.push(child));
       if (fn) {
         fn(node);
       }
