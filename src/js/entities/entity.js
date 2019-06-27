@@ -6,8 +6,9 @@ class Entity {
     this.position = opts.position || {x: 0, y: 0};
 
     this.centered = opts.centered || false;
+    this.size = opts.size || null;
 
-    this._sprites = new SpriteSet(5, opts.names);
+    this._sprites = new SpriteSet(30, opts.names);
     this._events = new Map();
 
     this._childs = new Set();
@@ -37,12 +38,28 @@ class Entity {
 
   coordsInbound(x, y) {
     const frame = this._sprites.getCurrentFrame();
-    const pos = this.position;
-    const xInbound = (x > pos.x - frame.width / 2) &&
-                     (x < pos.x + frame.width / 2);
+    let w = frame.width;
+    let h = frame.height;
+    let xInbound = false;
+    let yInbound = false;
 
-    const yInbound = (y > pos.y - frame.height / 2) &&
-                     (y < pos.y + frame.height / 2);
+    if (this.size) {
+      w = this.size.width;
+      h = this.size.height;
+    }
+
+    const pos = this.position;
+    if (this.centered) {
+      xInbound = (x > pos.x - w / 2) &&
+                 (x < pos.x + w / 2);
+
+      yInbound = (y > pos.y - h / 2) &&
+                 (y < pos.y + h / 2);
+    } else {
+      xInbound = (x > pos.x && x < pos.x + w);
+      yInbound = (y > pos.y && y < pos.y + h);
+    }
+
     return xInbound && yInbound;
   }
 
@@ -85,12 +102,19 @@ class Entity {
 
     let dx = 0;
     let dy = 0;
+    let w = img.width;
+    let h = img.height;
+
+    if (this.size) {
+      w = this.size.width;
+      h = this.size.height;
+    }
     if (this.centered) {
-      dx = -img.width / 2;
-      dy = -img.height / 2;
+      dx = -w / 2;
+      dy = -h / 2;
     }
 
-    ctx.drawImage(img, this.position.x + dx, this.position.y + dy);
+    ctx.drawImage(img, this.position.x + dx, this.position.y + dy, w, h);
   }
 }
 
