@@ -5,7 +5,9 @@ class Entity {
   constructor(opts = {}) {
     this.position = opts.position || {x: 0, y: 0};
 
-    this._sprites = new SpriteSet(30, opts.names);
+    this.centered = opts.centered || false;
+
+    this._sprites = new SpriteSet(5, opts.names);
     this._events = new Map();
 
     this._childs = new Set();
@@ -81,7 +83,14 @@ class Entity {
       return;
     }
 
-    ctx.drawImage(img, this.position.x, this.position.y);
+    let dx = 0;
+    let dy = 0;
+    if (this.centered) {
+      dx = -img.width / 2;
+      dy = -img.height / 2;
+    }
+
+    ctx.drawImage(img, this.position.x + dx, this.position.y + dy);
   }
 }
 
