@@ -2,11 +2,15 @@ const Tower = require('./entities/tower');
 const Enemy = require('./entities/enemy');
 const GameMap = require('./entities/map');
 const Layout = require('./entities/layout');
+const paths = require('./paths');
+const enemyFactory = require('./helpers/enemy-factory');
 
 const canvas = document.getElementById('game-canvas');
 
 let lastRender = 0;
 let stop = false;
+
+const SPAWN_POINT = {x: 190, y: -30};
 
 class Game {
   constructor() {
@@ -17,10 +21,16 @@ class Game {
 
     this.map = new GameMap({
       names: ['map.jpg'],
+      size: {
+        width: 1600,
+        height: 900,
+      },
     });
+
     this.layout.addMapEntity(this.map);
-    this.map.on('onClick', () => {console.log('Map Clicked')});
     this.wave = 0;
+    this.money = 5000;
+    this.health = 5;
   }
 
   draw() {
@@ -29,33 +39,76 @@ class Game {
 
   start() {
     stop = false;
+    this.generateEnemies();
     this.fake();
     window.requestAnimationFrame(() => this._loop());
   }
 
+
+  // 490, 233
   fake() {
-    const en2 = new Enemy({
-      health: 1000,
+    const tower = new Tower({
+      names: ['13.png'],
       position: {
-        x: 100,
-        y: 200,
+        x: 490,
+        y: 233,
       },
-      names: ['29.png', '30.png', '31.png', '32.png', '33.png', '34.png'],
     });
 
-    en2.on('onClick', () => {
-      console.log('click');
-    });
-
-    this.map.appendChild(en2);
+    this.map.appendChild(tower);
+    this.towers.push(tower);
   }
 
   stop() {
     stop = true;
   }
 
-  update(progress) {
+  _onEnemyFinished(enemy) {
+    this._removeEnemy(enemy);
+    this.checkAliveEnemies();
+  }
 
+  checkAliveEnemies() {
+    if (this.enemies.length === 0) {
+      setTimeout(() => this.generateEnemies(), 3000);
+    }
+  }
+
+  _removeEnemy(enemy) {
+    this.map.removeChild(enemy);
+    this.enemies.splice(this.enemies.indexOf(enemy), 1);
+  }
+
+  _onEnemyDeath(enemy) {
+    this.money += 50;
+
+    this._removeEnemy(enemy);
+    this.checkAliveEnemies();
+  }
+
+  generateEnemies() {
+    const count = this.wave * 5 + 20;
+
+    for (let i = 0; i < count; i++) {
+      const xOffset = Math.random() * 50 - 25;
+      const yOffset = -Math.random() * 40 * i;
+
+      const spawn = {x: SPAWN_POINT.x + xOffset, y: SPAWN_POINT.y + yOffset};
+      const enemy = enemyFactory.random(spawn);
+      const path = paths[Math.trunc(Math.random() * paths.length)];
+
+      enemy.setPath(path);
+      enemy.on('onTarget', this._onEnemyFinished.bind(this));
+      enemy.on('onDeath', this._onEnemyDeath.bind(this));
+
+      this.enemies.push(enemy);
+      this.map.appendChild(enemy);
+    }
+  }
+
+  update(progress) {
+    this.enemies.forEach((enemy) => enemy.moveTo(progress));
+    this.towers.forEach((tower) => tower.attack(this.enemies));
   }
 
   _loop() {
