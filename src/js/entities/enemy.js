@@ -168,7 +168,7 @@ class Enemy extends Entity {
     }
   }
 
-  moveTo(progress, target) {
+  moveTo(progress) {
     const delta = 15;
     const pos = this.position;
     const path = this._path[0];
