@@ -1,0 +1,35 @@
+{
+  "name": "t-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha ./test/**/*.*",
+    "build": "gulp build",
+    "dev": "gulp watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NijoElite/tower-defense.git"
+  },
+  "author": "Eugene Malchenko",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/NijoElite/tower-defense/issues"
+  },
+  "homepage": "https://github.com/NijoElite/tower-defense#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": "^2.26.7",
+    "browserify": "^16.2.3",
+    "chai": "^4.2.0",
+    "chai-spies": "^1.0.0",
+    "eslint": "^6.0.1",
+    "eslint-config-google": "^0.13.0",
+    "gulp": "^4.0.2",
+    "gulp-livereload": "^4.0.1",
+    "gulp-rename": "^1.4.0",
+    "mocha": "^6.1.4",
+    "vinyl-source-stream": "^2.0.0"
+  }
+}
