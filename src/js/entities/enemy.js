@@ -83,12 +83,15 @@ class Enemy extends Entity {
     }
 
     const pos = this.position;
-    const hp = this.health / this._maxHealth;
+    let hp = this.health / this._maxHealth;
+    hp = hp < 0 ? 0 : hp;
+    hp = hp > 1 ? 1 : hp;
+
     ctx.fillStyle = '#ff0000';
     ctx.fillRect(pos.x + dx, pos.y + dy, w, 3); // bg of health bar
 
     ctx.fillStyle = '#00ff00';
-    ctx.fillRect(pos.x + dx, hp * (pos.y + dy), w, 3);
+    ctx.fillRect(pos.x + dx, pos.y + dy, hp * w, 3);
   }
 
   kill() {
