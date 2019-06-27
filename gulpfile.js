@@ -28,6 +28,11 @@ gulp.task('js', () => {
       .pipe(gulp.dest(config.output.js));
 });
 
+gulp.task('assets', () => {
+  return gulp.src(config.input.assets)
+      .pipe(gulp.dest(config.output.assets));
+});
+
 gulp.task('html', () => {
   return gulp.src(config.input.html)
       .pipe(gulp.dest(config.output.html));
@@ -38,7 +43,7 @@ gulp.task('reload', (cb) => {
   cb();
 });
 
-gulp.task('build', gulp.series(['js', 'html', 'reload']));
+gulp.task('build', gulp.series(['js', 'html', 'reload', 'assets']));
 
 gulp.task('watch', () => {
   browserSync.init({
