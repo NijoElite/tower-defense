@@ -151,4 +151,4 @@ const paths = [[
   },
 ]];
 
-module.exprots = paths;
+module.exports = paths;
