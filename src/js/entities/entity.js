@@ -93,6 +93,13 @@ class Entity {
     event.add(cb);
   }
 
+  getAbsolutePosition() {
+    return {
+      x: this.position.x + this.parent.position.x,
+      y: this.position.y + this.parent.position.y,
+    };
+  }
+
   _fireEvent(eventName, ...args) {
     const event = this._events.get(eventName);
 
