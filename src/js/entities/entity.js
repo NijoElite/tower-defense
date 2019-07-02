@@ -38,6 +38,11 @@ class Entity {
 
   coordsInbound(x, y) {
     const frame = this._sprites.getCurrentFrame();
+
+    if (!frame) {
+      return false;
+    }
+
     let w = frame.width;
     let h = frame.height;
     let xInbound = false;
