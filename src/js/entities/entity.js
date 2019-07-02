@@ -94,10 +94,19 @@ class Entity {
   }
 
   getAbsolutePosition() {
-    return {
-      x: this.position.x + this.parent.position.x,
-      y: this.position.y + this.parent.position.y,
-    };
+    let result = {};
+    if (!this.parent) {
+      result = {
+        x: this.position.x,
+        y: this.position.y,
+      };
+    } else {
+      result = {
+        x: this.position.x + this.parent.position.x,
+        y: this.position.y + this.parent.position.y,
+      };
+    }
+    return result;
   }
 
   _fireEvent(eventName, ...args) {
