@@ -111,11 +111,11 @@ class Layout {
   }
 
   showPopup(ent) {
-
+    this._popups.appendChild(ent);
   }
 
   closePopup(ent) {
-
+    this._popups.removeChild(ent);
   }
 
   getTowers() {
