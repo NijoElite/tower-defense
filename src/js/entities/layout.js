@@ -115,8 +115,15 @@ class Layout {
   }
 
   showPopup(ent) {
-    this.closePopup();
+    if (ent === this._popup) {
+      return this.closePopup();
+    }
+
     this._popup = ent;
+  }
+
+  isPopupVisible() {
+    return !!this._popup;
   }
 
   closePopup() {
