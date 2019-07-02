@@ -70,7 +70,7 @@ class Layout {
       return result;
     };
 
-    const clickedEnt = bfsFinder(this._popups) ||
+    const clickedEnt = bfsFinder(this._popup) ||
                        bfsFinder(this._container) ||
                        bfsFinder(this._map);
 
