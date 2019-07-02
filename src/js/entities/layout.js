@@ -5,6 +5,10 @@ const Entity = require('../entities/entity');
 
 // Breadth-first search in entity
 function bfs(ent, fn) {
+  if (!ent) {
+    return;
+  }
+
   const queue = [];
   const visitedNodes = [];
   queue.push(ent);
@@ -34,7 +38,7 @@ class Layout {
     }
 
     this._map = map;
-    this._popups = new Entity();
+    this._popup = new Entity();
     this._container = new Entity();
 
     this._canvas = canvas;
@@ -79,7 +83,7 @@ class Layout {
     const drawEnt = (ent) => ent.draw(this._ctx);
     bfs(this._map, drawEnt);
     bfs(this._container, drawEnt);
-    bfs(this._popups, drawEnt);
+    bfs(this._popup, drawEnt);
   }
 
   addEntity(enemy) {
@@ -111,11 +115,12 @@ class Layout {
   }
 
   showPopup(ent) {
-    this._popups.appendChild(ent);
+    this.closePopup();
+    this._popup = ent;
   }
 
-  closePopup(ent) {
-    this._popups.removeChild(ent);
+  closePopup() {
+    this._popup = null;
   }
 
   getTowers() {
