@@ -34,7 +34,7 @@ class Layout {
     }
 
     this._map = map;
-
+    this._popups = new Entity();
     this._container = new Entity();
 
     this._canvas = canvas;
@@ -56,9 +56,9 @@ class Layout {
       return ent.coordsInbound(x, y);
     };
 
-    const bfsFinder = (set) => {
+    const bfsFinder = (ent) => {
       let result = null;
-      bfs(set, (node) => {
+      bfs(ent, (node) => {
         if (isClicked(node, e.clientX, e.clientY)) {
           result = node;
         }
@@ -66,15 +66,20 @@ class Layout {
       return result;
     };
 
-    const clickedEnt = bfsFinder(this._menu) || bfsFinder(this._map);
+    const clickedEnt = bfsFinder(this._popups) ||
+                       bfsFinder(this._container) ||
+                       bfsFinder(this._map);
 
     return clickedEnt;
   }
 
   draw() {
     this._ctx.clearRect(0, 0, 2000, 2000);
-    bfs(this._map, (ent) => ent.draw(this._ctx));
-    bfs(this._container, (ent) => ent.draw(this._ctx));
+
+    const drawEnt = (ent) => ent.draw(this._ctx);
+    bfs(this._map, drawEnt);
+    bfs(this._container, drawEnt);
+    bfs(this._popups, drawEnt);
   }
 
   addEntity(enemy) {
@@ -103,6 +108,14 @@ class Layout {
 
   removeMenuItem(item) {
     this._container.removeChild(item);
+  }
+
+  showPopup(ent) {
+
+  }
+
+  closePopup(ent) {
+
   }
 
   getTowers() {
