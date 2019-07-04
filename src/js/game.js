@@ -1,5 +1,4 @@
 const Tower = require('./entities/tower');
-const GameMap = require('./entities/map');
 const Layout = require('./lib/layout');
 const Entity = require('./entities/entity');
 
@@ -12,25 +11,14 @@ let stop = false;
 
 class Game {
   constructor() {
-    const map = new GameMap({
-      names: ['map.jpg'],
-      size: {
-        width: 1600,
-        height: 900,
-      },
-    });
-
     this.level = level;
-    this.layout = new Layout(canvas, map);
+    this.layout = new Layout(canvas, this.level.map);
 
-    map.on('onClick', () => {
+    this.level.map.on('onClick', () => {
       if (this._pause) return;
       this.layout.closePopup();
     });
 
-    this.wave = 0;
-    this.money = 5000;
-    this.health = 5;
     this._pause = false;
 
     this._createMenu();
@@ -179,14 +167,14 @@ class Game {
 
 
   onEnemyDeath(enemy) {
-    this.money += 50;
+    this.level.money += 50;
 
     this.layout.removeEntity(enemy);
     this.checkAliveEnemies();
   }
 
   onEnemyFinished(enemy) {
-    this.health -= 1;
+    this.level.health -= 1;
 
     this.layout.removeEntity(enemy);
     this.checkAliveEnemies();
@@ -203,7 +191,7 @@ class Game {
     const onDeath = this.onEnemyDeath.bind(this);
     const onFinished = this.onEnemyFinished.bind(this);
 
-    const enemies = this.level.generateEnemies(this.wave, onDeath, onFinished);
+    const enemies = this.level.generateEnemies(onDeath, onFinished);
 
     enemies.forEach((enemy) => {
       this.layout.addEntity(enemy);

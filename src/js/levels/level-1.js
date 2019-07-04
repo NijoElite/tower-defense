@@ -162,12 +162,14 @@ const PATHS = [[
   },
 ]];
 
+const MAP = ['map.jpg'];
 
-const level = new Level(SPAWN, PATHS, PLACES);
+
+const level = new Level(SPAWN, PATHS, PLACES, MAP);
 
 
-level.generateEnemies = function(wave, onDeath, onFinished) {
-  const count = wave * 5 + 20;
+level.generateEnemies = function(onDeath, onFinished) {
+  const count = this.wave * 5 + 20;
   const enemies = [];
 
   for (let i = 0; i < count; i++) {
@@ -187,5 +189,8 @@ level.generateEnemies = function(wave, onDeath, onFinished) {
 
   return enemies;
 };
+
+level.health = 5;
+level.money = 1000;
 
 module.exports = level;
