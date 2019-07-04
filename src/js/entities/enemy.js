@@ -6,6 +6,7 @@ class Enemy extends Entity {
     super(opts);
 
     this._health = opts.health || 100;
+    this._maxHealth = this._health;
     this._speed = opts.speed || 2;
     this._path = [];
 
@@ -56,6 +57,41 @@ class Enemy extends Entity {
 
     pos.x += signX * vx;
     pos.y += signY * vy;
+  }
+
+  draw(ctx) {
+    super.draw(ctx);
+
+    const img = this._sprites.getNextFrame();
+
+    if (typeof img === 'undefined') {
+      return;
+    }
+
+    let dx = 0;
+    let dy = -3;
+    let w = img.width;
+    let h = img.height;
+
+    if (this.size) {
+      w = this.size.width;
+      h = this.size.height;
+    }
+    if (this.centered) {
+      dx += -w / 2;
+      dy += -h / 2;
+    }
+
+    const pos = this.position;
+    let hp = this.health / this._maxHealth;
+    hp = hp < 0 ? 0 : hp;
+    hp = hp > 1 ? 1 : hp;
+
+    ctx.fillStyle = '#ff0000';
+    ctx.fillRect(pos.x + dx, pos.y + dy, w, 3); // bg of health bar
+
+    ctx.fillStyle = '#00ff00';
+    ctx.fillRect(pos.x + dx, pos.y + dy, hp * w, 3);
   }
 
   kill() {

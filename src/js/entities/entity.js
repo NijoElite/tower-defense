@@ -6,6 +6,7 @@ class Entity {
     this.position = opts.position || {x: 0, y: 0};
 
     this.centered = opts.centered || false;
+    this.relative = opts.relative || false;
     this.size = opts.size || null;
 
     this._sprites = new SpriteSet(opts.fps || 30, opts.names);
@@ -27,17 +28,22 @@ class Entity {
   }
 
   appendChild(child) {
-    child._parent = this;
+    child.parent = this;
     this._childs.add(child);
   }
 
   removeChild(child) {
-    child._parent = null;
+    child.parent = null;
     this._childs.delete(child);
   }
 
   coordsInbound(x, y) {
     const frame = this._sprites.getCurrentFrame();
+
+    if (!frame) {
+      return false;
+    }
+
     let w = frame.width;
     let h = frame.height;
     let xInbound = false;
@@ -48,7 +54,13 @@ class Entity {
       h = this.size.height;
     }
 
-    const pos = this.position;
+    let pos = this.position;
+    if (this.relative && this.parent) {
+      pos = {};
+      pos.x = this.parent.position.x + this.position.x;
+      pos.y = this.parent.position.y + this.position.y;
+    }
+
     if (this.centered) {
       xInbound = (x > pos.x - w / 2) &&
                  (x < pos.x + w / 2);
@@ -81,6 +93,22 @@ class Entity {
     event.add(cb);
   }
 
+  getAbsolutePosition() {
+    let result = {};
+    if (!this.parent) {
+      result = {
+        x: this.position.x,
+        y: this.position.y,
+      };
+    } else {
+      result = {
+        x: this.position.x + this.parent.position.x,
+        y: this.position.y + this.parent.position.y,
+      };
+    }
+    return result;
+  }
+
   _fireEvent(eventName, ...args) {
     const event = this._events.get(eventName);
 
@@ -104,17 +132,25 @@ class Entity {
     let dy = 0;
     let w = img.width;
     let h = img.height;
+    let x = this.position.x;
+    let y = this.position.y;
 
     if (this.size) {
       w = this.size.width;
       h = this.size.height;
     }
+
     if (this.centered) {
       dx = -w / 2;
       dy = -h / 2;
     }
 
-    ctx.drawImage(img, this.position.x + dx, this.position.y + dy, w, h);
+    if (this.relative && this.parent) {
+      x = this.parent.position.x + this.position.x;
+      y = this.parent.position.y + this.position.y;
+    }
+
+    ctx.drawImage(img, x + dx, y + dy, w, h);
   }
 }
 

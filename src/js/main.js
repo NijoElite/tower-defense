@@ -1,5 +1,8 @@
-const Game = require('./game');
 const resources = require('./lib/resources');
 
-resources.onReady(() => new Game().start());
+resources.onReady(() => {
+  const Game = require('./game');
+  new Game().start();
+}
+);
 resources.load();

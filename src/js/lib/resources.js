@@ -45,7 +45,8 @@ const filenames = ['10.png', '13.png', '16.png',
   'enemy_4/frame0002.png', 'enemy_4/frame0006.png',
   'enemy_4/frame0010.png', 'enemy_4/frame0014.png',
   'enemy_4/frame0003.png', 'enemy_4/frame0007.png',
-  'enemy_4/frame0011.png', 'enemy_4/frame0015.png'];
+  'enemy_4/frame0011.png', 'enemy_4/frame0015.png',
+  'pause-btn.png', 'pause-bg.png', 'place.png'];
 
 const onReadyCallbacks = [];
 const resources = {};

@@ -5,9 +5,10 @@ class Tower extends Entity {
     super(opts);
 
     this._damage = opts.damage || 50;
-    this._range = opts.range || 150;
+    this._range = opts.range || 50;
+    this._lastShot = 0;
 
-    this._cooldown = opts.cooldown || 6000;
+    this._cooldown = opts.cooldown || 500;
   }
 
   _getClosestTarget(targets) {
@@ -40,7 +41,19 @@ class Tower extends Entity {
   }
 
   attack(targets) {
+    if (this._lastShot === 0) {
+      this._lastShot = Date.now();
+    }
+
+    if (Date.now() - this._lastShot < this._cooldown) {
+      return;
+    }
+    this._lastShot = Date.now();
     const enemyTarget = this._getClosestTarget(targets);
+
+    if (!enemyTarget) {
+      return;
+    }
 
     enemyTarget.applyDamage(this._damage);
   }
