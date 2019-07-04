@@ -1,6 +1,6 @@
 const Tower = require('./entities/tower');
 const GameMap = require('./entities/map');
-const Layout = require('./entities/layout');
+const Layout = require('./lib/layout');
 const Entity = require('./entities/entity');
 
 const level = require('./levels/level-1');
