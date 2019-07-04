@@ -14,10 +14,7 @@ class Game {
     this.level = level;
     this.layout = new Layout(canvas, this.level.map);
 
-    this.level.map.on('onClick', () => {
-      if (this._pause) return;
-      this.layout.closePopup();
-    });
+    this.level.map.on('onClick', this.onMapClick.bind(this));
 
     this._pause = false;
 
@@ -27,6 +24,11 @@ class Game {
       place.on('onClick', this.placeClick.bind(this));
       this.layout.addEntity(place);
     });
+  }
+
+  onMapClick() {
+    if (this._pause) return;
+    this.layout.closePopup();
   }
 
 
@@ -158,7 +160,7 @@ class Game {
     stop = false;
 
     this.generateEnemies();
-    window.requestAnimationFrame(() => this._loop());
+    window.requestAnimationFrame(this._loop.bind(this));
   }
 
   stop() {
