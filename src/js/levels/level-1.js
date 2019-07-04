@@ -1,5 +1,5 @@
 const Level = require('../lib/level');
-
+const enemyFactory = require('../helpers/enemy-factory');
 
 const SPAWN = {x: 190, y: -30};
 const PLACES = [
@@ -164,5 +164,28 @@ const PATHS = [[
 
 
 const level = new Level(SPAWN, PATHS, PLACES);
+
+
+level.generateEnemies = function(wave, onDeath, onFinished) {
+  const count = wave * 5 + 20;
+  const enemies = [];
+
+  for (let i = 0; i < count; i++) {
+    const xOffset = Math.random() * 50 - 25;
+    const yOffset = -Math.random() * 40 * i;
+
+    const spawn = {x: this.spawn.x + xOffset, y: this.spawn.y + yOffset};
+    const enemy = enemyFactory.random(spawn);
+    const path = this.paths[Math.trunc(Math.random() * this.paths.length)];
+
+    enemy.setPath(path);
+    enemy.on('onTarget', onFinished);
+    enemy.on('onDeath', onDeath);
+
+    enemies.push(enemy);
+  }
+
+  return enemies;
+};
 
 module.exports = level;
