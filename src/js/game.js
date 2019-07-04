@@ -1,10 +1,6 @@
 const Tower = require('./entities/tower');
-const Enemy = require('./entities/enemy');
-const Place = require('./entities/place');
 const GameMap = require('./entities/map');
 const Layout = require('./entities/layout');
-const paths = require('./paths');
-const enemyFactory = require('./helpers/enemy-factory');
 const Entity = require('./entities/entity');
 
 const level = require('./levels/level-1');
@@ -132,7 +128,7 @@ class Game {
 
   buildClick(e) {
     let names = [];
-    
+
     const popup = e.parent;
     const place = popup.place;
 
