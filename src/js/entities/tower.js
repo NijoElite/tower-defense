@@ -21,7 +21,7 @@ class Tower extends Entity {
       }
 
       const distance = this._getDistanceToTarget(target);
-      if (distance < minDistance) {
+      if (distance < minDistance && distance <= this._range) {
         closest = target;
         minDistance = distance;
       }
