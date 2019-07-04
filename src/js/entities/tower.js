@@ -41,13 +41,10 @@ class Tower extends Entity {
   }
 
   attack(targets) {
-    if (this._lastShot === 0) {
-      this._lastShot = Date.now();
-    }
-
-    if (Date.now() - this._lastShot < this._cooldown) {
+    if (this._lastShot || Date.now() - this._lastShot < this._cooldown ) {
       return;
     }
+
     this._lastShot = Date.now();
     const enemyTarget = this._getClosestTarget(targets);
 
