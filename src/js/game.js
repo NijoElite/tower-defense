@@ -1,6 +1,7 @@
 const Tower = require('./entities/tower');
 const Layout = require('./lib/layout');
 const Entity = require('./entities/entity');
+const towerFactory = require('./helpers/tower-factory');
 
 const level = require('./levels/level-1');
 
@@ -55,7 +56,7 @@ class Game {
       size: {width: 55, height: 60},
       centered: true,
     });
-    buildFireTower.type = 'fire';
+    buildFireTower.build = towerFactory.fireTower;
 
     const buildStoneTower = new Entity({
       names: ['25.png'],
@@ -64,7 +65,7 @@ class Game {
       size: {width: 55, height: 60},
       centered: true,
     });
-    buildStoneTower.type = 'stone';
+    buildStoneTower.build = towerFactory.stoneTower;
 
     buildFireTower.on('onClick', this.buildClick.bind(this));
     buildStoneTower.on('onClick', this.buildClick.bind(this));
@@ -117,34 +118,12 @@ class Game {
   }
 
   buildClick(e) {
-    let names = [];
-
     const popup = e.parent;
     const place = popup.place;
 
     const pos = popup.getAbsolutePosition();
-    let damage = 0;
-    let cooldown = 0;
 
-    if (e.type === 'fire') {
-      names = ['12.png'];
-      damage = 3;
-      cooldown = 500;
-    }
-    if (e.type === 'stone') {
-      names = ['6.png'];
-      damage = 150;
-      cooldown = 3000;
-    }
-
-    const tower = new Tower({
-      names: names,
-      position: pos,
-      centered: true,
-      size: {width: 36, height: 50},
-      damage: damage,
-      cooldown: cooldown,
-    });
+    const tower = e.build(pos);
 
     this.layout.removeEntity(place);
     this.layout.addEntity(tower);
