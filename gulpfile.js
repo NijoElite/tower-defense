@@ -3,10 +3,11 @@ const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const rename = require('gulp-rename');
 const browserSync = require('browser-sync');
+const tsify = require('tsify');
 
 
 const config = {
-  entry: './src/js/main.js',
+  entry: './src/js/main.ts',
   input: {
     html: './src/**/*.html',
     css: './src/css/*.css',
@@ -21,10 +22,10 @@ const config = {
 };
 
 gulp.task('js', () => {
-  return browserify(config.entry)
+  return browserify(config.entry, {debug: true})
+      .plugin(tsify, {target: 'es6'})
       .bundle()
-      .pipe(source(config.entry))
-      .pipe(rename('main.js'))
+      .pipe(source('main.js'))
       .pipe(gulp.dest(config.output.js));
 });
 

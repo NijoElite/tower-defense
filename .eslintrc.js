@@ -1,11 +1,12 @@
 module.exports = {
+  'parser': '@typescript-eslint/parser',
   'env': {
     'browser': true,
     'commonjs': true,
     'es6': true,
   },
   'extends': [
-    'google',
+    'plugin:@typescript-eslint/recommended',
   ],
   'globals': {
     'Atomics': 'readonly',
@@ -15,6 +16,5 @@ module.exports = {
     'ecmaVersion': 2018,
   },
   'rules': {
-    'require-jsdoc' : 0
   },
 };
