@@ -1,13 +1,13 @@
-import {Entity, EntityOptions} from './entity';
+import {UIElement, UIElementOptions} from '../ui/uiElement';
 import GameEvent from '../lib/events';
 import {Point} from '../lib/interfaces';
 
-interface EnemyOptions extends EntityOptions {
+interface EnemyOptions extends UIElementOptions {
     health?: number;
     speed?: number; 
 }
 
-class Enemy extends Entity {
+class Enemy extends UIElement {
     private _health: number;
     private _maxHealth: number;
     private _speed: number;

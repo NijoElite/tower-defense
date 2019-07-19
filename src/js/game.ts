@@ -1,7 +1,7 @@
 import {Tower} from './entities/tower';
 import {Enemy} from './entities/enemy';
 import Layout from './lib/layout';
-import {Entity} from './entities/entity';
+import {UIElement} from './ui/uiElement';
 import towerFactory from './helpers/tower-factory';
 import Level from './lib/level';
 import {Place} from './entities/place';
@@ -99,7 +99,7 @@ class Game {
             };
         };
 
-        const pauseBtn = new Entity({
+        const pauseBtn = new UIElement({
             names: ['pause-btn.png'],
             position: nextPos(),
         });
@@ -183,7 +183,6 @@ class Game {
 
         enemies.forEach((enemy: Enemy): void => {
             this.layout.addEntity(enemy);
-            console.log(enemy);
         });
     }
 

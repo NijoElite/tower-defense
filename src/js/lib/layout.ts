@@ -1,10 +1,10 @@
 import {Enemy} from '../entities/enemy';
 import {Tower} from '../entities/tower';
 import {GameMap} from '../entities/map';
-import {Entity} from '../entities/entity';
+import {UIElement} from '../ui/uiElement';
 
-// Breadth-first search in entity
-function bfs(ent: Entity, fn: Function): void {
+// Breadth-first search in UIElement
+function bfs(ent: UIElement, fn: Function): void {
     if (!ent) {
         return;
     }
@@ -15,7 +15,7 @@ function bfs(ent: Entity, fn: Function): void {
     while (queue.length !== 0) {
         const node = queue.shift();
         visitedNodes.push(node);
-        node.childs.forEach((child: Entity): void => {queue.push(child)});
+        node.childs.forEach((child: UIElement): void => {queue.push(child)});
         if (fn) {
             fn(node);
         }
@@ -25,15 +25,15 @@ function bfs(ent: Entity, fn: Function): void {
 
 class Layout {
     private _map: GameMap;
-    private _popup: Entity;
-    private _container: Entity;
+    private _popup: UIElement;
+    private _container: UIElement;
     private _canvas: HTMLCanvasElement;
     private _ctx: CanvasRenderingContext2D;
 
     public constructor(canvas: HTMLCanvasElement, map: GameMap) {
         this._map = map;
-        this._popup = new Entity();
-        this._container = new Entity();
+        this._popup = new UIElement();
+        this._container = new UIElement();
 
         this._canvas = canvas;
         this._ctx = canvas.getContext('2d');
@@ -49,14 +49,14 @@ class Layout {
         clickedEntity._fireEvent('onClick', clickedEntity, e);
     }
 
-    private _getClickedEntity(e): Entity {
-        const isClicked = (ent: Entity, x: number, y: number): boolean => {
+    private _getClickedEntity(e): UIElement {
+        const isClicked = (ent: UIElement, x: number, y: number): boolean => {
             return ent.coordsInbound(x, y);
         };
 
-        const bfsFinder = (ent: Entity): Entity => {
+        const bfsFinder = (ent: UIElement): UIElement => {
             let result = null;
-            bfs(ent, (node: Entity): void => {
+            bfs(ent, (node: UIElement): void => {
                 if (isClicked(node, e.clientX, e.clientY)) {
                     result = node;
                 }
@@ -74,24 +74,24 @@ class Layout {
     public draw(): void {
         this._ctx.clearRect(0, 0, 2000, 2000);
 
-        const drawEnt = (ent: Entity): void => ent.draw(this._ctx);
+        const drawEnt = (ent: UIElement): void => ent.draw(this._ctx);
         bfs(this._map, drawEnt);
         bfs(this._container, drawEnt);
         bfs(this._popup, drawEnt);
     }
 
-    public addEntity(ent: Entity): void {
+    public addEntity(ent: UIElement): void {
         this._map.appendChild(ent);
     }
 
-    public addMenuItem(item: Entity): void {
+    public addMenuItem(item: UIElement): void {
         this._container.appendChild(item);
     }
 
     public getEnemies(): Enemy[] {
         const result = [];
 
-        bfs(this._map, (ent: Entity): void => {
+        bfs(this._map, (ent: UIElement): void => {
             if (ent instanceof Enemy) {
                 result.push(ent);
             }
@@ -127,7 +127,7 @@ class Layout {
     public getTowers(): Tower[] {
         const result: Tower[] = [];
 
-        bfs(this._map, (ent: Entity): void => {
+        bfs(this._map, (ent: UIElement): void => {
             if (ent instanceof Tower) {
                 result.push(ent);
             }

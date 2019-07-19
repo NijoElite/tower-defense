@@ -1,6 +1,6 @@
-import {Entity} from './entity';
+import {UIElement} from '../ui/uiElement';
 
-class Popup extends Entity{
+class Popup extends UIElement{
     public action: Function;
 }
 

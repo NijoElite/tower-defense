@@ -1,8 +1,7 @@
-import {Entity, EntityOptions} from './entity';
+import {UIElement, UIElementOptions} from '../ui/uiElement';
 
-
-class GameMap extends Entity {
-    public constructor(opts: EntityOptions) {
+class GameMap extends UIElement {
+    public constructor(opts: UIElementOptions) {
         super(opts);
     }
 }

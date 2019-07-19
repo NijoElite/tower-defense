@@ -2,7 +2,8 @@ import GameEvent from '../lib/events';
 import SpriteSet from '../lib/sprite-set';
 import {Point, Size} from '../lib/interfaces';
 
-interface EntityOptions {
+
+interface UIElementOptions {
     position: Point;
     names?: string[];
     centered?: boolean;
@@ -11,20 +12,19 @@ interface EntityOptions {
     size?: Size;
 }
 
-
-class Entity {
+class UIElement {
     public centered: boolean;
     public relative: boolean;
     public size: Size;
     public position: Point;
-    public parent: Entity;
+    public parent: UIElement;
 
     protected _sprites: SpriteSet;
     protected _events: Map<string, GameEvent>;
-    protected _childs: Set<Entity>;
+    protected _childs: Set<UIElement>;
 
 
-    public constructor(opts: EntityOptions = {position: {x:0, y:0}}) {
+    public constructor(opts: UIElementOptions = {position: {x:0, y:0}}) {
         this.position = opts.position;
 
         this.centered = opts.centered || false;
@@ -42,16 +42,16 @@ class Entity {
         this._events.set('onClick', new GameEvent('onClick'));
     }
 
-    public get childs(): Set<Entity> {
+    public get childs(): Set<UIElement> {
         return this._childs;
     }
 
-    public appendChild(child: Entity): void {
+    public appendChild(child: UIElement): void {
         child.parent = this;
         this._childs.add(child);
     }
 
-    public removeChild(child: Entity): void {
+    public removeChild(child: UIElement): void {
         child.parent = null;
         this._childs.delete(child);
     }
@@ -154,4 +154,5 @@ class Entity {
     }
 }
 
-export {Entity, EntityOptions};
+
+export  {UIElement, UIElementOptions};

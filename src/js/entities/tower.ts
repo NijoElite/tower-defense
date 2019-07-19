@@ -1,13 +1,14 @@
-import {Entity, EntityOptions} from './entity';
+import {UIElement, UIElementOptions} from '../ui/uiElement';
+
 import {Enemy} from './enemy';
 
-interface TowerOptions extends EntityOptions {
+interface TowerOptions extends UIElementOptions {
     damage?: number;
     range?: number;
     cooldown?: number;
 }
 
-class Tower extends Entity {
+class Tower extends UIElement {
     public damage: number;
     public range: number;
     public cooldown: number;
