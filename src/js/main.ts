@@ -1,5 +1,6 @@
 import Game from './game';
 
-const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
+const foreground = document.getElementById('game-foreground') as HTMLCanvasElement;
+const background = document.getElementById('game-background') as HTMLCanvasElement;
 
-new Game(canvas).start();
+new Game(foreground, background).start();

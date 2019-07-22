@@ -1,6 +1,5 @@
 import {Tower} from './entities/tower';
 import {Enemy} from './entities/enemy';
-import Layout from './lib/layout';
 import {UIElement} from './ui/uiElement';
 import towerFactory from './helpers/tower-factory';
 import Level from './lib/level';
@@ -9,48 +8,47 @@ import {Popup} from './entities/popup';
 
 import grassLevel from './levels/level-1';
 import { Point } from './lib/interfaces';
+import { Frame } from './ui/frame';
 
 let lastRender = 0;
-let stop = false;
+let renderCounter = 0;
+let drawBackground = false;
 
 class Game {
-    public layout: Layout;
     public pause: boolean;
     public level: Level;
 
-    private _popups;
+    public frame: Frame;
 
-    public constructor(canvas: HTMLCanvasElement) {
+    public enemies: Enemy[] = [];
+    public towers: Tower[] = [];
+    public popups: any = {};
+
+    public constructor(foreground: HTMLCanvasElement, background: HTMLCanvasElement) {
         this.level = new grassLevel();
-        this.layout = new Layout(canvas, this.level.map);
+        this.frame = new Frame(foreground, background)
+
+        this.frame.addBackground(this.level.map);
 
         this.level.map.on('onClick', this.onMapClick.bind(this));
 
         this.pause = false;
 
-        this._createMenu();
-        this._createPopups();
+        this.createMenu();
+        this.createPopups();
+        
         this.level.places.forEach((place: Place): void => {
             place.on('onClick', this.placeClick.bind(this));
-            this.layout.addEntity(place);
+            this.level.map.appendChild(place);            
         });
     }
 
     protected onMapClick(): void {
-        if (this.pause) return;
-        this.layout.closePopup();
+        this.frame.popup = null;
     }
 
 
-    private _createPopups(): void {
-        this._popups = {};
-
-        this._popups.pause = new Popup({
-            names: ['pause-bg.png'],
-            position: {x: 0, y: 0},
-            size: {width: 1600, height: 900},
-        });
-
+    private createPopups(): void {
         const build = new Popup({
             names: ['53.png'],
             position: {x: 0, y: 0},
@@ -82,10 +80,10 @@ class Game {
         build.appendChild(buildFireTower);
         build.appendChild(buildStoneTower);
 
-        this._popups.build = build;
+        this.popups.build = build;
     }
 
-    private _createMenu(): void {
+    private createMenu(): void {
         const startX = 1600;
         const padding = 5;
         const size = 32;
@@ -106,24 +104,21 @@ class Game {
 
         pauseBtn.on('onClick', this.pauseClick.bind(this));
 
-        this.layout.addMenuItem(pauseBtn);
+        this.frame.addBackground(pauseBtn);
     }
 
     private pauseClick(e): void {
         this.pause = !this.pause;
-
-        this.layout.showPopup(this._popups.pause);
     }
 
     private placeClick(e): void {
-        this._popups.build.position = {
+        this.popups.build.position = {
             x: e.position.x + 16,
             y: e.position.y + 16,
         };
 
-        this._popups.build.place = e;
-
-        this.layout.showPopup(this._popups.build);
+        this.popups.build.place = e;
+        this.frame.popup = this.popups.build;
     }
 
     private buildClick(e): void {
@@ -131,17 +126,15 @@ class Game {
         const place = popup.place;
 
         const pos = popup.getAbsolutePosition();
-
         const tower = e.action(pos);
 
-        this.layout.removeEntity(place);
-        this.layout.addEntity(tower);
-        this.layout.closePopup();
-    }
+        this.towers.push(tower);
+        this.frame.addForeground(tower);
+        
+        this.level.map.removeChild(place);
+        drawBackground = true;
 
-
-    public draw(): void {
-        this.layout.draw();
+        this.frame.popup = null;
     }
 
     public start(): void {
@@ -149,28 +142,32 @@ class Game {
         window.requestAnimationFrame(this._loop.bind(this));
     }
 
-    public stop(): void {
-        stop = true;
-    }
-
-
     private onEnemyDeath(enemy: Enemy): void {
         this.level.money += 50;
 
-        this.layout.removeEntity(enemy);
+        this.removeEnemy(enemy);        
         this.checkAliveEnemies();
     }
 
     private onEnemyFinished(enemy: Enemy): void {
         this.level.health -= 1;
 
-        this.layout.removeEntity(enemy);
+        this.removeEnemy(enemy);
         this.checkAliveEnemies();
     }
 
+    private removeTower(tower: Tower): void {
+        this.towers.splice(this.towers.indexOf(tower), 1);
+        this.frame.removeForeground(tower);
+    }
+
+    private removeEnemy(enemy: Enemy): void {
+        this.enemies.splice(this.enemies.indexOf(enemy), 1);
+        this.frame.removeForeground(enemy);
+    }
+
     public checkAliveEnemies(): void {
-        const enemies = this.layout.getEnemies();
-        if (enemies.length === 0) {
+        if (this.enemies.length === 0) {
             setTimeout(this.generateEnemies.bind(this), 3000);
         }
     }
@@ -182,41 +179,34 @@ class Game {
         const enemies = this.level.generateEnemies(onDeath, onFinished);
 
         enemies.forEach((enemy: Enemy): void => {
-            this.layout.addEntity(enemy);
+            this.frame.addForeground(enemy);
+            this.enemies.push(enemy);
         });
     }
 
     private update(progress: number): void  {
-        const enemies = this.layout.getEnemies();
-        const towers = this.layout.getTowers();
-
-        enemies.forEach((enemy: Enemy): void => enemy.moveTo(progress));
-        towers.forEach((tower: Tower): void => tower.attack(enemies));
+        this.enemies.forEach((enemy: Enemy): void => enemy.moveTo(progress));
+        this.towers.forEach((tower: Tower): void => tower.attack(this.enemies));
     }
 
     private _loop(): void {
         if (lastRender === 0) {
             lastRender = Date.now();
         }
-
-        this.draw();
-
-        if (this.pause) {
-            lastRender = Date.now();
-            window.requestAnimationFrame(this._loop.bind(this));
-            return;
-        }
-
+        
         const progress = Date.now() - lastRender;
 
-        if (progress > 1000 / 45) {
+        if (!this.pause) {
             this.update(progress);
-            lastRender = Date.now();
         }
 
-        if (!stop) {
-            window.requestAnimationFrame(this._loop.bind(this));
-        }
+        this.frame.draw(drawBackground);
+
+        drawBackground = renderCounter === 10;
+        renderCounter = (renderCounter + 1) % 1000;
+
+        lastRender = Date.now();
+        window.requestAnimationFrame(this._loop.bind(this));
     }
 }
 
